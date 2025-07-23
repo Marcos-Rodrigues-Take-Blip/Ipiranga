@@ -1,0 +1,305 @@
+$(function () {
+    if($('.carousel-cards').length > 0 && $(window).width() < 992){
+        $('.carousel-cards').find('.card-carousel').each(function(){
+            if(!$(this).data('bgmobile')){ return }
+            var bgMobile = $(this).data('bgmobile');
+            $(this).css('background-image', 'url( '+ bgMobile + ')');
+        })
+    }
+
+    $(window).resize(function(){
+        if($('.carousel-cards').length > 0 && $(window).width() < 992){
+            $('.carousel-cards').find('.card-carousel').each(function(){
+                if(!$(this).data('bgmobile')){ return }
+                var bgMobile = $(this).data('bgmobile');
+                $(this).css('background-image', 'url( '+ bgMobile + ')');
+            })
+        } else {
+            $('.carousel-cards').find('.card-carousel').each(function(){
+                if(!$(this).data('bgdesktop')){ return }
+                var bgDesktop = $(this).data('bgdesktop');
+                $(this).css('background-image', 'url( '+ bgDesktop + ')');
+            })
+        }
+    });
+
+    var carouselCardsTransitionSpeed = 800;
+    var carouselCardsAutoplaySpeed = 4800;
+    let isCarouselCardsPausedForDots = false;
+
+    if($('.carousel-cards').length > 0) {
+        var carouselCards = new Swiper(".carousel-cards", {
+            centeredSlides: true,
+            spaceBetween: 24,
+            loop: true,
+            speed: carouselCardsTransitionSpeed,
+            // slidesPerView: "auto",
+            autoplay: {
+                delay: carouselCardsAutoplaySpeed,
+                disableOnInteraction: false,
+            },
+            
+            navigation: {
+                nextEl: ".swiper-button-next",
+                prevEl: ".swiper-button-prev",
+            },
+            pagination: {
+                el: ".swiper-pagination",
+                clickable: true,
+            },
+            breakpoints:{
+                0: {
+                    centeredSlides: true,
+                    slidesPerView: "auto",
+                },
+                768: {
+                    centeredSlides: true,
+                    slidesPerView: "auto",
+                },
+                900: {
+                    centeredSlides: true,
+                    slidesPerView: 3,
+                },
+                1000: {
+                    centeredSlides: true,
+                    slidesPerView: "auto",
+                },
+                1300: {
+                    centeredSlides: true,
+                    slidesPerView: "auto",
+                },
+                1600: {
+                    centeredSlides: true,
+                    slidesPerView: 2.5,
+                },
+
+                1800: {
+                    centeredSlides: true,
+                    slidesPerView: 2.9,
+                },
+                4000: {
+                    centeredSlides: true,
+                    slidesPerView: 4,
+                }
+
+            }
+        });
+        carouselCards.on('slideChangeTransitionStart', function(swiper) {
+            if(isCarouselCardsPausedForDots) {
+                return;
+            }
+
+            countdownBarSvg.addClass('d-none');
+        })
+        carouselCards.on('slideChangeTransitionEnd', function(swiper) {
+            if(isCarouselCardsPausedForDots) {
+                return;
+            }
+
+            countdownBarSvg.removeClass('d-none');
+        })
+    }
+
+    var countdownBarSvg = $('.cards_progress-circle_bar-svg');
+    var cardsProgressCircle = $('.cards_progress-circle');
+
+    cardsProgressCircle.on('click', function(e) {
+        if($(this).hasClass('paused')) {
+            isCarouselCardsPausedForDots = false;
+            carouselCards.autoplay.start();
+            // carouselCards.autoplay.run();
+            $(this).removeClass('paused');
+            countdownBarSvg.removeClass('d-none');
+        } else {
+            isCarouselCardsPausedForDots = true;
+            carouselCards.autoplay.pause();
+            $(this).addClass('paused');
+            countdownBarSvg.addClass('d-none');
+        }
+    })
+
+    var carouselCardsDot = $('.carousel-cards').find('.swiper-pagination-bullet');
+
+    carouselCardsDot.on('click', function() {
+        isCarouselCardsPausedForDots = true;
+        carouselCards.autoplay.pause();
+        cardsProgressCircle.addClass('paused');
+        countdownBarSvg.addClass('d-none');
+    });
+
+    var offsetTopIncreaser = 200;
+    var combustiveisSect = $('.combustiveis_sect');
+
+    if(combustiveisSect.length > 0){
+        window.addEventListener('scroll', function() {
+            if(window.scrollY + window.innerHeight > combustiveisSect[0].offsetTop + offsetTopIncreaser){
+                combustiveisSect.addClass('animation-in');
+
+            }
+        })
+    }
+
+    
+
+    if($('.encontre-posto').length > 0){
+        $(window).scroll(function () {
+            if(this.scrollY + (this.innerHeight/2) > $('.encontre-posto')[0].offsetTop){
+                $('.encontre-posto').addClass('animate');
+                setTimeout(function () {
+                    $('.mapa-animado_seta').addClass('animate');
+                    $('.mapa-animado_linha-preenchida-wrapper').addClass('animate');
+                }, 1000);
+            }
+        });
+    }
+
+    if($('.sect-saude-na-estrada').length > 0){
+        $(window).scroll(function () {
+            if(this.scrollY + (this.innerHeight/2) >= $('.sect-saude-na-estrada')[0].offsetTop){
+                $('.sect-saude-na-estrada').addClass('animate');
+                $('.sect-saude-na-estrada .flutuantes').addClass('animate');
+            }
+        });
+    }
+
+    if($('.trabalhe-ipiranga_sect').length > 0){
+        $(window).scroll(function () {
+            if(this.scrollY + (this.innerHeight/2) >= $('.trabalhe-ipiranga_sect')[0].offsetTop){
+                $('.trabalhe-ipiranga_sect').addClass('animate');
+            }
+        });
+    }
+
+    var carouselPostoCompleto = $('.posto-completo_carousel');
+
+    let indexCurrentCard = 0;
+    var btnsHandleCardCarousel = $('.posto-completo_btn');
+
+    function handlePostoCarouselIndexActive(carousel) {
+        var activeIndex = carousel.activeIndex;
+        if(activeIndex === indexCurrentCard) {
+            return;
+        } else {
+            btnsHandleCardCarousel[indexCurrentCard].classList.remove('active');
+            btnsHandleCardCarousel[activeIndex].classList.add('active');
+            indexCurrentCard = activeIndex;
+        }
+    }
+
+    // SWIPER DE CARDS
+    if(window.innerWidth >= 992) {
+        if(carouselPostoCompleto.length > 0) {
+            var postoCompletoCarousel = new Swiper(".posto-completo_carousel", {
+                effect: "cards",
+                grabCursor: true,
+                cardsEffect: {
+                    perSlideOffset: 12,
+                    slideShadows: false,
+                },
+                navigation: {
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev',
+                },
+                on: {
+                    slideChange: function(swiper) {
+                        handlePostoCarouselIndexActive(swiper);
+                    }
+                }
+            });
+        }
+
+    } else {
+        if(carouselPostoCompleto.length > 0) {
+            var postoCompletoCarousel = new Swiper(".posto-completo_carousel", {
+                slidesPerView: 'auto',
+                grabCursor: true,
+                pagination: {
+                    el: '.swiper-pagination',
+                    type: 'bullets',
+                },
+                breakpoints: {
+                    768: {
+                        slidesPerView: 2.2,
+                    },
+                }
+            });
+        }
+    }
+
+    $('.btns_wrapper').on('click', function(evt){
+
+        if(evt.target.classList.contains('posto-completo_btn')) {
+            var btnIndex = Number(evt.target.getAttribute('data-index'));
+
+            if(btnIndex === indexCurrentCard) {
+                return;
+            } else {
+                btnsHandleCardCarousel[indexCurrentCard].classList.remove('active');
+                btnsHandleCardCarousel[btnIndex].classList.add('active');
+                postoCompletoCarousel.slideTo(btnIndex, 400);
+                indexCurrentCard = btnIndex;
+            }
+        }
+    });
+
+    var timeOutCombustiveis;
+
+    $('.sect-gasolinas_nav_btn').click(function () {
+        clearTimeout(timeOutCombustiveis);
+        var href = $(this).data('href');
+
+        $('.sect-gasolinas_nav_btn.active').removeClass('active');
+        $('.sect-gasolinas_wrapper_info.active').removeClass('active').removeClass('animate');
+
+        $('.sect-gasolinas_wrapper').addClass('animate');
+        $(this).addClass('active');
+
+        $(`.${href}-info`).addClass('active');
+        timeOutCombustiveis = setTimeout(function () {
+            $(`.${href}-info`).addClass('animate');
+            $('.sect-gasolinas_wrapper').removeClass('animate');
+        }, 600);
+    });
+
+    // $('.modal-video').on('hidden.bs.modal', function (event) {
+    //     $(this).find('.video')[0].pause();
+    // });
+
+    // $('.modal-video').on('shown.bs.modal', function (event) {
+    //     $(this).find('.video')[0].play();
+    // });
+
+    // $('.inscricao-sect_btn-incricao').on('click', function (e) {
+    //     e.preventDefault();
+    //     var that = this;
+    //     $(this).parents('.inscricao-sect').find('.inscricao-sect_content').addClass('d-none');
+    //     $(this).parents('.inscricao-sect').find('.inscricao-sect_content-sucesso').removeClass('d-none');
+
+    //     $(this).parents('.inscricao-sect').find('.inscricao-sect_content').find('.form-control').val('');
+        
+    //     setTimeout(function () {
+    //         $(that).parents('.inscricao-sect').find('.inscricao-sect_content-sucesso').addClass('d-none');
+    //         $(that).parents('.inscricao-sect').find('.inscricao-sect_content').removeClass('d-none');
+    //     }, 3000);
+    // });
+
+    // if($('.cpf-mask').length > 0){
+    //     $('.cpf-mask').mask('000.000.000-00', {reverse: true});
+    // }
+
+    // $('.inscricao-sect_form-inscricao input[required=true][type=emial]').on('keyup', function() {
+    //     var disabled = true;
+    //     $(this).parents('.inscricao-sect_form-inscricao').find('input[required=true]').each(function() {
+    //         // if($(this).val() !== "" && grecaptcha.getResponse() != ''){
+    //         if($(this).val() !== ""){
+    //             console.log("valores", $(this).val())
+    //             disabled = false;
+    //         }else if(grecaptcha.getResponse() === ''){
+    //             $('.error.captch').css("display","block")
+    //             disabled = true;
+    //         }
+    //     });
+    //     $(this).parents('.inscricao-sect_content').find('.inscricao-sect_btn-incricao').attr('disabled', disabled);
+    // });
+});
+
